@@ -1334,6 +1334,12 @@
       grid-template-columns: 1fr !important;
       gap: 16px !important;
     }
+    .tech-growth-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+    #onboarding .slide-inner > div[style*="background:var(--ink)"] > div[style*="grid-template-columns:1fr 1fr"]:last-child {
+      grid-template-columns: 1fr !important;
+    }
 
     /* Scenarios */
     .scenario-card { padding: 28px 24px; border-radius: 12px; }
@@ -1993,6 +1999,39 @@
           <li style="font-size:13px; color:#4a463e; padding:6px 0; padding-left:16px; position:relative; line-height:1.5;"><span style="position:absolute;left:0;color:var(--green);">&#10003;</span> Built-in CRM — full client history and analytics</li>
           <li style="font-size:13px; color:#4a463e; padding:6px 0; padding-left:16px; position:relative; line-height:1.5;"><span style="position:absolute;left:0;color:var(--green);">&#10003;</span> Scalable — same platform serves Kuwait, India &amp; beyond</li>
         </ul>
+      </div>
+    </div>
+
+    <!-- Technology Growth Impact -->
+    <div style="background:var(--ink); border-radius:14px; padding:32px; margin-top:28px; color:var(--paper);">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--accent); margin-bottom:20px; display:flex; align-items:center; gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Growth Impact of Technology</div>
+
+      <div class="tech-growth-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:20px;">
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:20px; text-align:center;">
+          <div style="font-family:'DM Serif Display',serif; font-size:32px; color:var(--green);">3x</div>
+          <div style="font-size:11px; color:#a0998d; margin-top:4px; line-height:1.4;">Client capacity without adding headcount</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:20px; text-align:center;">
+          <div style="font-family:'DM Serif Display',serif; font-size:32px; color:var(--accent);">60%</div>
+          <div style="font-size:11px; color:#a0998d; margin-top:4px; line-height:1.4;">Reduction in manual processing time</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:20px; text-align:center;">
+          <div style="font-family:'DM Serif Display',serif; font-size:32px; color:var(--green);">24/7</div>
+          <div style="font-size:11px; color:#a0998d; margin-top:4px; line-height:1.4;">Client onboarding — no office hours dependency</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:20px; text-align:center;">
+          <div style="font-family:'DM Serif Display',serif; font-size:32px; color:var(--accent);">0</div>
+          <div style="font-size:11px; color:#a0998d; margin-top:4px; line-height:1.4;">Paper documents — fully digital workflow</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="font-size:13px; color:#c4bfb6; line-height:1.7; padding-left:16px; border-left:2px solid var(--accent);">
+          <strong style="color:var(--paper);">Revenue Growth:</strong> Automated lead capture and eligibility screening converts more inquiries into paying clients. The mobile app opens new markets — clients from Saudi Arabia, Bahrain, and Oman can onboard without visiting the Kuwait office.
+        </div>
+        <div style="font-size:13px; color:#c4bfb6; line-height:1.7; padding-left:16px; border-left:2px solid var(--accent);">
+          <strong style="color:var(--paper);">Cost Efficiency:</strong> Each consultant currently handles ~15 active cases. With automation, this scales to 40+ cases per consultant. Lower cost per client acquisition, reduced document errors, and faster processing means higher margins and repeat referrals.
+        </div>
       </div>
     </div>
   </div>
