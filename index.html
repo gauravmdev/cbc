@@ -1226,8 +1226,13 @@
     .goals-grid { grid-template-columns: 1fr; }
 
     .sales-highlight { grid-template-columns: 1fr 1fr; }
-    .invest-use-grid { grid-template-columns: 1fr 1fr; }
+    .invest-use-grid { grid-template-columns: 1fr 1fr !important; }
     .passport-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Onboarding — tablet */
+    #onboarding .slide-inner > div[style*="repeat(5"] {
+      grid-template-columns: 1fr 1fr !important;
+    }
 
     .ps-col.problem { border-radius: 16px 16px 0 0; }
     .ps-col.solution { border-radius: 0 0 16px 16px; border-left: 1px solid var(--border); border-top: none; }
@@ -1312,6 +1317,22 @@
     /* Projection charts */
     #projections .slide-inner > div[style*="grid-template-columns:1fr 1fr"] {
       grid-template-columns: 1fr !important;
+    }
+
+    /* Onboarding slide */
+    #onboarding .slide-inner > div[style*="repeat(5"] {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+    #onboarding .slide-inner > div[style*="repeat(5"] > div {
+      padding: 16px 14px !important;
+    }
+    #onboarding .slide-inner > div[style*="repeat(5"] > div > div[style*="position:absolute"] {
+      display: none !important;
+    }
+    #onboarding .slide-inner > div[style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
     }
 
     /* Scenarios */
