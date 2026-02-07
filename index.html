@@ -1309,6 +1309,11 @@
       gap: 12px !important;
     }
 
+    /* Projection charts */
+    #projections .slide-inner > div[style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+
     /* Scenarios */
     .scenario-card { padding: 28px 24px; border-radius: 12px; }
     .scenario-card h3 { font-size: 20px; }
@@ -1690,6 +1695,43 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- 2026 Projection Chart -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:28px;">
+
+      <!-- Bar chart: Monthly Revenue vs Expenses -->
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px;">
+        <div class="chart-title" style="color:var(--ink);">Monthly Revenue vs Expenses (KWD)</div>
+        <div style="display:flex; align-items:flex-end; gap:6px; height:180px; padding-bottom:24px; position:relative;">
+          <!-- Zero line for Q1 -->
+          <div id="projBarChart" style="display:flex; align-items:flex-end; gap:6px; width:100%; height:100%;"></div>
+        </div>
+        <div style="display:flex; gap:20px; justify-content:center; margin-top:4px;">
+          <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted);">
+            <div style="width:10px; height:10px; border-radius:3px; background:var(--green);"></div>Gross Sales
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted);">
+            <div style="width:10px; height:10px; border-radius:3px; background:var(--red);"></div>Expenses
+          </div>
+        </div>
+      </div>
+
+      <!-- Area-style Net Revenue chart -->
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px;">
+        <div class="chart-title" style="color:var(--ink);">Net Revenue Trend (KWD)</div>
+        <div style="position:relative; height:180px; padding-bottom:24px;">
+          <svg id="projLineChart" viewBox="0 0 400 160" preserveAspectRatio="none" style="width:100%; height:100%;"></svg>
+        </div>
+        <div style="display:flex; gap:20px; justify-content:center; margin-top:4px;">
+          <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted);">
+            <div style="width:10px; height:10px; border-radius:3px; background:var(--green);"></div>Profit
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted);">
+            <div style="width:10px; height:10px; border-radius:3px; background:var(--red);"></div>Loss
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="proj-summary-grid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-top:24px;">
@@ -2199,6 +2241,160 @@ monthlyData.months.forEach((month, i) => {
   group.appendChild(label);
   chart.appendChild(group);
 });
+
+// ============ 2026 PROJECTION CHARTS ============
+const proj2026 = {
+  months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  sales:    [0, 0, 0, 3640, 3640, 3640, 3640, 3640, 3640, 3640, 3640, 3640],
+  expenses: [1880, 1330, 1330, 1680, 1330, 1330, 1680, 1330, 1330, 1680, 1330, 1330],
+  net:      [-1880, -1330, -1330, 1960, 2310, 2310, 1960, 2310, 2310, 1960, 2310, 2310]
+};
+
+// Bar chart — Revenue vs Expenses
+const projBar = document.getElementById('projBarChart');
+const projMaxVal = 4000;
+
+proj2026.months.forEach((month, i) => {
+  const col = document.createElement('div');
+  col.style.cssText = 'flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; position:relative;';
+
+  const barsWrap = document.createElement('div');
+  barsWrap.style.cssText = 'display:flex; gap:2px; align-items:flex-end; width:100%; justify-content:center;';
+
+  // Sales bar
+  const salesBar = document.createElement('div');
+  const salesH = Math.max((proj2026.sales[i] / projMaxVal) * 100, 0);
+  salesBar.style.cssText = `width:45%; height:${salesH}%; background:var(--green); border-radius:3px 3px 0 0; min-height:${salesH > 0 ? '4px' : '0'}; transition:height 0.5s ease;`;
+  salesBar.title = `${month} Sales: ${proj2026.sales[i].toLocaleString()} KWD`;
+
+  // Expense bar
+  const expBar = document.createElement('div');
+  const expH = Math.max((proj2026.expenses[i] / projMaxVal) * 100, 2);
+  expBar.style.cssText = `width:45%; height:${expH}%; background:var(--red); border-radius:3px 3px 0 0; min-height:4px; transition:height 0.5s ease;`;
+  expBar.title = `${month} Expenses: ${proj2026.expenses[i].toLocaleString()} KWD`;
+
+  barsWrap.appendChild(salesBar);
+  barsWrap.appendChild(expBar);
+
+  const label = document.createElement('div');
+  label.style.cssText = 'font-size:9px; color:var(--muted); font-family:"JetBrains Mono",monospace; position:absolute; bottom:-20px; white-space:nowrap;';
+  label.textContent = month.substring(0, 3);
+
+  col.appendChild(barsWrap);
+  col.appendChild(label);
+  projBar.appendChild(col);
+});
+
+// Line/Area chart — Net Revenue Trend
+const svg = document.getElementById('projLineChart');
+const svgW = 400, svgH = 160;
+const netMin = -2000, netMax = 2500;
+const range = netMax - netMin;
+const zeroY = svgH - ((0 - netMin) / range) * svgH;
+
+// Zero line
+const zeroLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+zeroLine.setAttribute('x1', 0); zeroLine.setAttribute('x2', svgW);
+zeroLine.setAttribute('y1', zeroY); zeroLine.setAttribute('y2', zeroY);
+zeroLine.setAttribute('stroke', '#e2ddd3'); zeroLine.setAttribute('stroke-width', '1');
+zeroLine.setAttribute('stroke-dasharray', '4,4');
+svg.appendChild(zeroLine);
+
+// Zero label
+const zeroLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+zeroLabel.setAttribute('x', 4); zeroLabel.setAttribute('y', zeroY - 4);
+zeroLabel.setAttribute('fill', '#8a8679'); zeroLabel.setAttribute('font-size', '9');
+zeroLabel.setAttribute('font-family', 'JetBrains Mono, monospace');
+zeroLabel.textContent = '0';
+svg.appendChild(zeroLabel);
+
+// Build points
+const points = proj2026.net.map((val, i) => {
+  const x = (i / 11) * (svgW - 20) + 10;
+  const y = svgH - ((val - netMin) / range) * svgH;
+  return { x, y, val };
+});
+
+// Area fill — split into loss (red) and profit (green)
+// Loss area (below zero, Q1)
+const lossPath = `M${points[0].x},${zeroY} ` +
+  points.slice(0, 3).map(p => `L${p.x},${p.y}`).join(' ') +
+  ` L${points[2].x},${zeroY} Z`;
+const lossArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+lossArea.setAttribute('d', lossPath);
+lossArea.setAttribute('fill', 'rgba(192, 57, 43, 0.12)');
+svg.appendChild(lossArea);
+
+// Profit area (above zero, Apr-Dec)
+const profitPath = `M${points[3].x},${zeroY} ` +
+  points.slice(3).map(p => `L${p.x},${p.y}`).join(' ') +
+  ` L${points[11].x},${zeroY} Z`;
+const profitArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+profitArea.setAttribute('d', profitPath);
+profitArea.setAttribute('fill', 'rgba(26, 122, 76, 0.12)');
+svg.appendChild(profitArea);
+
+// Line
+const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+polyline.setAttribute('d', linePath);
+polyline.setAttribute('fill', 'none');
+polyline.setAttribute('stroke', 'var(--green)');
+polyline.setAttribute('stroke-width', '2.5');
+polyline.setAttribute('stroke-linejoin', 'round');
+svg.appendChild(polyline);
+
+// Dots and labels
+points.forEach((p, i) => {
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y);
+  circle.setAttribute('r', '4');
+  circle.setAttribute('fill', p.val >= 0 ? 'var(--green)' : 'var(--red)');
+  circle.setAttribute('stroke', 'white'); circle.setAttribute('stroke-width', '2');
+  svg.appendChild(circle);
+
+  // Month labels at bottom
+  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  text.setAttribute('x', p.x); text.setAttribute('y', svgH + 2);
+  text.setAttribute('text-anchor', 'middle');
+  text.setAttribute('fill', '#8a8679'); text.setAttribute('font-size', '8');
+  text.setAttribute('font-family', 'JetBrains Mono, monospace');
+  text.textContent = proj2026.months[i].substring(0, 1);
+  svg.appendChild(text);
+
+  // Value labels on key points
+  if (i === 0 || i === 3 || i === 11) {
+    const valText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    valText.setAttribute('x', p.x);
+    valText.setAttribute('y', p.val >= 0 ? p.y - 10 : p.y + 16);
+    valText.setAttribute('text-anchor', 'middle');
+    valText.setAttribute('fill', p.val >= 0 ? 'var(--green)' : 'var(--red)');
+    valText.setAttribute('font-size', '10');
+    valText.setAttribute('font-weight', '600');
+    valText.setAttribute('font-family', 'JetBrains Mono, monospace');
+    valText.textContent = p.val >= 0 ? p.val.toLocaleString() : `(${Math.abs(p.val).toLocaleString()})`;
+    svg.appendChild(valText);
+  }
+});
+
+// Breakeven annotation
+const bePoint = points[3];
+const annLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+annLine.setAttribute('x1', bePoint.x); annLine.setAttribute('x2', bePoint.x);
+annLine.setAttribute('y1', 5); annLine.setAttribute('y2', zeroY);
+annLine.setAttribute('stroke', 'var(--accent)'); annLine.setAttribute('stroke-width', '1');
+annLine.setAttribute('stroke-dasharray', '3,3');
+svg.appendChild(annLine);
+
+const annText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+annText.setAttribute('x', bePoint.x); annText.setAttribute('y', 12);
+annText.setAttribute('text-anchor', 'middle');
+annText.setAttribute('fill', 'var(--accent)'); annText.setAttribute('font-size', '9');
+annText.setAttribute('font-weight', '600');
+annText.setAttribute('font-family', 'JetBrains Mono, monospace');
+annText.textContent = 'BREAKEVEN';
+svg.appendChild(annText);
 
 // Navigation dot active state
 const slides = document.querySelectorAll('.slide');
